@@ -39,7 +39,7 @@ systemctl enable "${app}-web" --quiet
 systemctl enable "${app}-worker" --quiet
 
 yunohost service add "${app}-web" --description="Ticket shop application" --log="/var/log/$app/$app.log"
-yunohost service add "${app}-worker" --description="Pretix worker" --log="/var/log/$app/$app.log"
+yunohost service add "${app}-worker" --description="Pretalx worker" --log="/var/log/$app/$app.log"
 
 #=================================================
 # RESTORE VARIOUS FILES

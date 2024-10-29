@@ -33,10 +33,11 @@ ynh_script_progression "Installing Python dependencies..."
 
 pushd $install_dir
     python3 -m venv $install_dir/venv
-    ynh_hide_warnings $install_dir/venv/bin/pip install -U --upgrade-strategy eager pretix gunicorn
-    $install_dir/venv/bin/python3 -m pretix migrate
-    $install_dir/venv/bin/python3 -m pretix rebuild
-    $install_dir/venv/bin/python3 -m pretix updateassets
+    ynh_hide_warnings $install_dir/venv/bin/pip install pip setuptools wheel gunicorn
+    ynh_hide_warnings $install_dir/venv/bin/pip install --upgrade-strategy eager -U "pretalx[postgres]"
+    ynh_hide_warnings $install_dir/venv/bin/python3 -m pretalx migrate
+    ynh_hide_warnings $install_dir/venv/bin/python3 -m pretalx rebuild
+    ynh_hide_warnings $install_dir/venv/bin/python3 -m pretalx updateassets
 popd
 
 #=================================================
@@ -44,10 +45,10 @@ popd
 #=================================================
 ynh_script_progression "Updating $app's configuration files..."
 
-ynh_config_add --template="pretix.cfg" --destination="$install_dir/pretix.cfg"
+ynh_config_add --template="pretalx.cfg" --destination="$install_dir/pretalx.cfg"
 
-chmod 600 "$install_dir/pretix.cfg"
-chown "$app:$app" "$install_dir/pretix.cfg"
+chmod 600 "$install_dir/pretalx.cfg"
+chown "$app:$app" "$install_dir/pretalx.cfg"
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
@@ -56,11 +57,11 @@ ynh_script_progression "Upgrading system configurations related to $app..."
 
 ynh_config_add_nginx
 
-ynh_config_add_systemd --service="${app}-web" --template="pretix-web.service"
-ynh_config_add_systemd --service="${app}-worker" --template="pretix-worker.service"
+ynh_config_add_systemd --service="${app}-web" --template="pretalx-web.service"
+ynh_config_add_systemd --service="${app}-worker" --template="pretalx-worker.service"
 
-yunohost service add "${app}-web" --description="Ticket shop application" --log="/var/log/$app/$app.log"
-yunohost service add "${app}-worker" --description="Pretix worker" --log="/var/log/$app/$app.log"
+yunohost service add "${app}-web" --description="Conference management application" --log="/var/log/$app/$app.log"
+yunohost service add "${app}-worker" --description="Pretalx worker" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
